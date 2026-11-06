@@ -20,14 +20,16 @@
 
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel MaxWidth="1280" Padding="32,36,32,28" Spacing="24">
-                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="20">
-                    <StackPanel Spacing="6">
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16">
+                    <Image Width="64" Height="64" VerticalAlignment="Center"
+                           Source="ms-appx:///Assets/Codex.png" AutomationProperties.Name="Codex logo" />
+                    <StackPanel Grid.Column="1" Spacing="6">
                         <TextBlock Text="Codex Cache Care" Style="{StaticResource TitleLargeTextBlockStyle}"
                                    TextWrapping="Wrap" AutomationProperties.HeadingLevel="Level1" />
                         <TextBlock Text="Find rebuildable Codex files and choose what to clear."
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
                     </StackPanel>
-                    <Button x:Name="ScanButton" Grid.Column="1" Content="Scan cache"
+                    <Button x:Name="ScanButton" Grid.Column="2" Content="Scan cache"
                             VerticalAlignment="Center" Click="ScanClicked" />
                 </Grid>
 

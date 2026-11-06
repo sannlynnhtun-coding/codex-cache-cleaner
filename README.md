@@ -28,3 +28,5 @@ dotnet publish CodexCacheCare -c Release -o portable
 ```
 
 The project uses the reference Markdown Viewer app's Windows App SDK version, Mica backdrop and native WinUI control styling.
+
+Codex artwork belongs to OpenAI. Codex Cache Care is an independent utility. [Artwork source](https://github.com/backnotprop/orchestrator/tree/main/assets/providers)

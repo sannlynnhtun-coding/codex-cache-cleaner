@@ -151,6 +151,13 @@ public sealed partial class MainWindow : Window
         try
         {
             var summary = new StackPanel { Spacing = 10 };
+            var logo = new Image
+            {
+                Width = 44, Height = 44, HorizontalAlignment = HorizontalAlignment.Left,
+                Source = new Microsoft.UI.Xaml.Media.Imaging.BitmapImage(new Uri("ms-appx:///Assets/Codex.png"))
+            };
+            AutomationProperties.SetName(logo, "Codex logo");
+            summary.Children.Add(logo);
             foreach (var group in groups)
             {
                 var selected = files.Where(file => file.Kind == group.Kind).ToArray();
