@@ -4,7 +4,7 @@ A WinUI 3 utility for inspecting and clearing selected Codex caches on Windows.
 
 ## Run
 
-Extract the entire portable ZIP and open **CodexCacheCare.exe**. The x64 build includes the .NET and Windows App SDK runtimes. The app opens maximized and stacks the dashboard into one column in a narrow window.
+Download **CodexCacheCare-Setup-x64.exe** from the [latest release](https://github.com/sannlynnhtun-coding/codex-cache-cleaner/releases/latest). The installer is for Windows 10 22H2 or later on x64 and installs for the current user. It includes the .NET and Windows App SDK runtimes and adds a Start menu shortcut. The app opens maximized and stacks the dashboard into one column in a narrow window.
 
 1. Select **Scan cache** to see the file count and size by category.
 2. Select the categories to clear and choose **Review cleanup**.
@@ -20,11 +20,17 @@ Chats, credentials, settings, browser storage, plugins and project files are out
 
 ## Build from source
 
-From the extracted source folder, use the .NET 10 SDK on Windows:
+From the repository root, use the .NET 10 SDK on Windows.
 
 ```powershell
 dotnet run --project CacheScanner.Check
 dotnet publish CodexCacheCare -c Release -o portable
+```
+
+To build the installer, run the Inno Setup 6 compiler (6.3 or later) after publishing.
+
+```powershell
+ISCC.exe scripts\installer.iss
 ```
 
 The project uses the reference Markdown Viewer app's Windows App SDK version, Mica backdrop and native WinUI control styling.
