@@ -5,42 +5,85 @@
     <Window.SystemBackdrop>
         <MicaBackdrop />
     </Window.SystemBackdrop>
-    <Grid x:Name="Root" RowDefinitions="*,Auto">
+
+    <Grid x:Name="Root" RowDefinitions="*,Auto" SizeChanged="LayoutChanged">
+        <Grid.Resources>
+            <Style x:Key="CategoryRowStyle" TargetType="Border">
+                <Setter Property="Padding" Value="14,6" />
+                <Setter Property="CornerRadius" Value="6" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+            </Style>
+            <Style x:Key="CategorySizeStyle" TargetType="TextBlock"
+                   BasedOn="{StaticResource BodyStrongTextBlockStyle}" />
+        </Grid.Resources>
+
         <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <StackPanel MaxWidth="800" Margin="32,26,32,24" Spacing="20">
-                <StackPanel Spacing="8">
-                    <TextBlock Text="STORAGE MAINTENANCE" Style="{StaticResource CaptionTextBlockStyle}" />
-                    <TextBlock Text="Codex Cache Care" Style="{StaticResource TitleLargeTextBlockStyle}" />
-                    <TextBlock Text="Find rebuildable Codex files and choose what to clear." TextWrapping="Wrap" />
-                </StackPanel>
-                <Border Padding="20,16" CornerRadius="8" BorderThickness="1"
-                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
-                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                        <StackPanel Spacing="4">
-                            <TextBlock Text="Cache found" Style="{StaticResource BodyStrongTextBlockStyle}" />
-                            <TextBlock x:Name="Total" Text="—" Style="{StaticResource TitleTextBlockStyle}" />
-                            <TextBlock x:Name="FileCount" Text="Scan to see what can be cleared." TextWrapping="Wrap" />
-                        </StackPanel>
-                        <Button x:Name="ScanButton" Grid.Column="1" Content="Scan cache"
-                                VerticalAlignment="Center" Click="ScanClicked" />
-                    </Grid>
-                </Border>
-                <StackPanel Spacing="10">
-                    <TextBlock Text="Cleanup categories" Style="{StaticResource SubtitleTextBlockStyle}" />
-                    <StackPanel x:Name="Categories" Spacing="6" />
-                </StackPanel>
+            <StackPanel MaxWidth="1280" Padding="32,36,32,28" Spacing="24">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="20">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="Codex Cache Care" Style="{StaticResource TitleLargeTextBlockStyle}"
+                                   TextWrapping="Wrap" AutomationProperties.HeadingLevel="Level1" />
+                        <TextBlock Text="Find rebuildable Codex files and choose what to clear."
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
+                    </StackPanel>
+                    <Button x:Name="ScanButton" Grid.Column="1" Content="Scan cache"
+                            VerticalAlignment="Center" Click="ScanClicked" />
+                </Grid>
+
                 <InfoBar x:Name="Status" IsClosable="False" IsOpen="True"
-                         Title="Protected data"
-                         Message="Chats, credentials, settings and project files are outside the cleanup scope." />
+                         Title="Ready to scan" Message="Scan cache to see available files and sizes." />
+
+                <Grid x:Name="Dashboard" RowDefinitions="Auto,Auto" RowSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition x:Name="SideColumn" Width="0" />
+                    </Grid.ColumnDefinitions>
+                    <Border Padding="20" CornerRadius="8" BorderThickness="1"
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="Cleanup categories" Style="{StaticResource SubtitleTextBlockStyle}"
+                                       AutomationProperties.HeadingLevel="Level2" />
+                            <TextBlock Text="Select the categories you want to include in the cleanup."
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
+                            <StackPanel x:Name="Categories" Spacing="8" />
+                        </StackPanel>
+                    </Border>
+
+                    <StackPanel x:Name="Overview" Grid.Row="1" Spacing="16">
+                        <Border Padding="20" CornerRadius="8" BorderThickness="1"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="Cache found" Style="{StaticResource BodyStrongTextBlockStyle}"
+                                           AutomationProperties.HeadingLevel="Level2" />
+                                <TextBlock x:Name="Total" Text="—" Style="{StaticResource TitleLargeTextBlockStyle}" />
+                                <TextBlock x:Name="FileCount" Text="Scan to calculate cache size."
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+                        <Border Padding="20" CornerRadius="8" BorderThickness="1"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="Protected data" Style="{StaticResource BodyStrongTextBlockStyle}"
+                                           AutomationProperties.HeadingLevel="Level2" />
+                                <TextBlock Text="Chats, credentials, settings and project files are outside the cleanup scope."
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Grid>
             </StackPanel>
         </ScrollViewer>
-        <Border Grid.Row="1" BorderThickness="0,1,0,0" Padding="32,14"
+
+        <Border Grid.Row="1" BorderThickness="0,1,0,0"
                 Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                 BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
-            <Grid MaxWidth="800" ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                <TextBlock x:Name="Selection" Text="No files selected" VerticalAlignment="Center"
-                           TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
+            <Grid MaxWidth="1280" Padding="32,14" ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <TextBlock x:Name="Selection" Text="No files selected" VerticalAlignment="Center" TextWrapping="Wrap"
+                           Style="{StaticResource BodyStrongTextBlockStyle}" AutomationProperties.LiveSetting="Polite" />
                 <Button x:Name="ReviewButton" Grid.Column="1" Content="Review cleanup" IsEnabled="False"
                         Style="{StaticResource AccentButtonStyle}" Click="ReviewClicked" />
             </Grid>

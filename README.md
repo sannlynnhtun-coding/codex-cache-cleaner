@@ -4,7 +4,7 @@ A WinUI 3 utility for inspecting and clearing selected Codex caches on Windows.
 
 ## Run
 
-Extract the entire portable ZIP and open **CodexCacheCare.exe**. The x64 build includes the .NET and Windows App SDK runtimes.
+Extract the entire portable ZIP and open **CodexCacheCare.exe**. The x64 build includes the .NET and Windows App SDK runtimes. The app opens maximized and stacks the dashboard into one column in a narrow window.
 
 1. Select **Scan cache** to see the file count and size by category.
 2. Select the categories to clear and choose **Review cleanup**.

@@ -1,7 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
-using Windows.Graphics;
+using Microsoft.UI.Windowing;
 
 namespace CodexCacheCare;
 
@@ -16,14 +16,24 @@ public sealed partial class MainWindow : Window
 
     private readonly Dictionary<CacheKind, CheckBox> choices = [];
     private ScanResult scan = new([], []);
+    private bool hasScan;
 
     public MainWindow()
     {
         InitializeComponent();
-        int workWidth = Microsoft.UI.Windowing.DisplayArea.GetFromWindowId(
-            AppWindow.Id, Microsoft.UI.Windowing.DisplayAreaFallback.Primary).WorkArea.Width;
-        AppWindow.Resize(new SizeInt32(Math.Min(860, workWidth), 720));
+        if (AppWindow.Presenter is OverlappedPresenter presenter)
+            presenter.Maximize();
         RenderScan();
+    }
+
+    private void LayoutChanged(object sender, SizeChangedEventArgs e)
+    {
+        bool wide = e.NewSize.Width >= 960;
+        SideColumn.Width = new GridLength(wide ? 320 : 0);
+        Dashboard.ColumnSpacing = wide ? 24 : 0;
+        Dashboard.RowSpacing = wide ? 0 : 16;
+        Grid.SetRow(Overview, wide ? 0 : 1);
+        Grid.SetColumn(Overview, wide ? 1 : 0);
     }
 
     private static ScanResult ScanCache()
@@ -47,6 +57,7 @@ public sealed partial class MainWindow : Window
         try
         {
             scan = await Task.Run(ScanCache);
+            hasScan = true;
             ScanButton.Content = "Scan again";
             Total.Text = FormatSize(scan.Files.Sum(file => file.Bytes));
             FileCount.Text = $"{scan.Files.Count:N0} files available for review";
@@ -59,6 +70,7 @@ public sealed partial class MainWindow : Window
         catch (Exception ex) when (ex is ArgumentException or IOException or UnauthorizedAccessException or NotSupportedException)
         {
             scan = new([], []);
+            hasScan = false;
             Total.Text = "—";
             FileCount.Text = "Scan unavailable";
             RenderScan();
@@ -92,10 +104,27 @@ public sealed partial class MainWindow : Window
             row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             row.Children.Add(check);
-            var amount = new TextBlock { Text = size, VerticalAlignment = VerticalAlignment.Center };
-            Grid.SetColumn(amount, 1);
-            row.Children.Add(amount);
-            Categories.Children.Add(row);
+            var amount = new TextBlock
+            {
+                Text = hasScan ? size : "—",
+                HorizontalAlignment = HorizontalAlignment.Right,
+                Style = (Style)Root.Resources["CategorySizeStyle"]
+            };
+            var count = new TextBlock
+            {
+                Text = hasScan ? $"{files.Length:N0} {(files.Length == 1 ? "file" : "files")}" : "",
+                HorizontalAlignment = HorizontalAlignment.Right
+            };
+            var metrics = new StackPanel { VerticalAlignment = VerticalAlignment.Center, Spacing = 3 };
+            metrics.Children.Add(amount);
+            metrics.Children.Add(count);
+            Grid.SetColumn(metrics, 1);
+            row.Children.Add(metrics);
+            Categories.Children.Add(new Border
+            {
+                Style = (Style)Root.Resources["CategoryRowStyle"],
+                Child = row
+            });
         }
 
         UpdateSelection();
@@ -172,6 +201,7 @@ public sealed partial class MainWindow : Window
             }
 
             scan = new([], []);
+            hasScan = false;
             Total.Text = "—";
             FileCount.Text = "Scan again to check remaining cache.";
             RenderScan();
